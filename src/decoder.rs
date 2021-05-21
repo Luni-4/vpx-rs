@@ -40,7 +40,7 @@ fn frame_from_img(img: vpx_image_t) -> Frame {
         .map(|((plane, line), chromaton)| unsafe {
             std::slice::from_raw_parts(
                 *plane as *const u8,
-                *line as usize * chromaton.map(|c| c.get_height(img.h as usize)).unwrap_or(0)
+                *line as usize * chromaton.map(|c| c.get_height(img.h as usize)).unwrap_or(0),
             )
         });
 
@@ -53,6 +53,7 @@ fn frame_from_img(img: vpx_image_t) -> Frame {
 use std::marker::PhantomData;
 
 /// VP9 Decoder
+#[derive(Clone)]
 pub struct VP9Decoder<T> {
     pub(crate) ctx: vpx_codec_ctx,
     pub(crate) iter: vpx_codec_iter_t,
@@ -60,6 +61,7 @@ pub struct VP9Decoder<T> {
 }
 
 unsafe impl<T: Send> Send for VP9Decoder<T> {} // TODO: Make sure it cannot be abused
+unsafe impl<T: Sync> Sync for VP9Decoder<T> {} // TODO: Super dangerous!
 
 impl<T> VP9Decoder<T> {
     /// Create a new decoder
@@ -90,7 +92,7 @@ impl<T> VP9Decoder<T> {
                     iter: ptr::null(),
                     private_data: PhantomData,
                 })
-            },
+            }
             _ => Err(ret),
         }
     }

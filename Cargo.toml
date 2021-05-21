@@ -16,7 +16,7 @@ codec-trait = ["av-codec"]
 [dependencies]
 vpx-sys = { version = "0.1.1", path = "vpx-sys" }
 av-data = { version = "0.3.0" }
-av-codec = { version = "0.2.2", optional = true }
+av-codec = { git = "https://github.com/Luni-4/rust-av", branch = "sync-clone", optional = true }
 
 [workspace]
 members = ["vpx-sys"]
